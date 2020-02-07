@@ -26,6 +26,13 @@ chmod 0400 source.go
 ! stdout .
 stderr 'permission denied'
 
+# missing reference
+! bib -bib empty.bib source.go
+! stdout .
+stderr 'unknown reference "hello"'
+
+-- empty.bib --
+
 -- invalid.bib --
 0000
 

@@ -105,7 +105,7 @@ func ParseCitations(line string) []string {
 func (s *Source) Validate(b *Bibliography) error {
 	for key := range s.Citations {
 		if b.Lookup(key) == nil {
-			return xerrors.Errorf("unknown reference '%s'", key)
+			return xerrors.Errorf("unknown reference %q", key)
 		}
 	}
 	return nil
