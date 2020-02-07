@@ -71,19 +71,18 @@ func Parse(r io.Reader) (*Source, error) {
 }
 
 // ParseFile parses a source file for citations and references.
-func ParseFile(path string) (*Source, error) {
+func ParseFile(path string) (s *Source, err error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() {
+		if errc := f.Close(); err != nil {
+			err = errc
+		}
+	}()
 
-	s, err := Parse(f)
-	if err != nil {
-		return nil, err
-	}
-
-	return s, nil
+	return Parse(f)
 }
 
 // IsComment returns whether the line is a comment.

@@ -46,12 +46,16 @@ type Bibliography struct {
 }
 
 // ReadBibliography reads entries from the given BiBTeX file.
-func ReadBibliography(path string) (*Bibliography, error) {
+func ReadBibliography(path string) (b *Bibliography, err error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() {
+		if errc := f.Close(); err != nil {
+			err = errc
+		}
+	}()
 
 	bib, err := bibtex.Parse(f)
 	if err != nil {
@@ -59,7 +63,7 @@ func ReadBibliography(path string) (*Bibliography, error) {
 	}
 
 	// Build.
-	b := &Bibliography{}
+	b = &Bibliography{}
 	for _, e := range bib.Entries {
 		if err := b.AddEntry(&Entry{BibEntry: *e}); err != nil {
 			return nil, err

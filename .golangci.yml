@@ -1,0 +1,12 @@
+linters:
+  enable-all: true
+  disable:
+    - gochecknoglobals
+    - gochecknoinits
+    - gosec
+    - prealloc
+    - funlen
+    - lll
+
+issues:
+  exclude-use-default: false
