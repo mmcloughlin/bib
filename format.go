@@ -61,7 +61,7 @@ func Format(e *Entry) (string, error) {
 		s += ", " + e.Fields["institution"].String() + "."
 
 	default:
-		return "", xerrors.Errorf("unknown entry type '%s'", e.Type)
+		return "", xerrors.Errorf("unknown entry type %q", e.Type)
 	}
 
 	// Look for a date.
@@ -75,7 +75,7 @@ func Format(e *Entry) (string, error) {
 	}
 
 	if accessed, err := e.DateField("urldate"); err == nil {
-		s += " (accessed " + accessed.Format("January _2, 2006") + ")"
+		s += " (accessed " + accessed.Format("January 2, 2006") + ")"
 	}
 
 	return s, nil
