@@ -52,7 +52,7 @@ func ReadBibliography(path string) (b *Bibliography, err error) {
 		return nil, err
 	}
 	defer func() {
-		if errc := f.Close(); err != nil {
+		if errc := f.Close(); err == nil && errc != nil {
 			err = errc
 		}
 	}()
@@ -76,7 +76,7 @@ func ReadBibliography(path string) (b *Bibliography, err error) {
 // AddEntry adds an entry to the bibliography.
 func (b *Bibliography) AddEntry(e *Entry) error {
 	if b.Lookup(e.CiteName) != nil {
-		return xerrors.Errorf("key '%s' already in bibliography", e.CiteName)
+		return xerrors.Errorf("key %q already in bibliography", e.CiteName)
 	}
 	b.Entries = append(b.Entries, e)
 	return nil

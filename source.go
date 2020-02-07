@@ -77,7 +77,7 @@ func ParseFile(path string) (s *Source, err error) {
 		return nil, err
 	}
 	defer func() {
-		if errc := f.Close(); err != nil {
+		if errc := f.Close(); err == nil && errc != nil {
 			err = errc
 		}
 	}()

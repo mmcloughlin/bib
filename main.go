@@ -7,41 +7,55 @@ import (
 	"os"
 )
 
-// Commandline flags.
+func main() {
+	os.Exit(main1())
+}
+
+func main1() int {
+	log.SetPrefix("bib: ")
+	log.SetFlags(0)
+	if err := mainerr(); err != nil {
+		log.Print(err)
+		return 1
+	}
+	return 0
+}
+
 var (
 	bibfile = flag.String("bib", "", "bibliography file")
 	write   = flag.Bool("w", false, "write result to (source) file instead of stdout")
 )
 
-func main() {
-	log.SetPrefix("bib: ")
-	log.SetFlags(0)
-
+func mainerr() error {
 	flag.Parse()
 
 	b, err := ReadBibliography(*bibfile)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for _, filename := range flag.Args() {
-		process(filename, b)
+		if err := process(filename, b); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func process(filename string, b *Bibliography) {
+func process(filename string, b *Bibliography) error {
 	s, err := ParseFile(filename)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if err := s.Validate(b); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	out, err := s.Bytes(b)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if *write {
@@ -50,7 +64,5 @@ func process(filename string, b *Bibliography) {
 		_, err = os.Stdout.Write(out)
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	return err
 }

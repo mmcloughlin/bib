@@ -1,0 +1,44 @@
+# missing bibliography file
+! bib -bib doesnotexist.bib
+! stdout .
+stderr 'no such file or directory'
+stderr 'doesnotexist\.bib'
+
+# invalid bibliography
+! bib -bib invalid.bib
+! stdout .
+stderr 'syntax error'
+
+# duplicate keys
+! bib -bib dupekey.bib
+! stdout .
+stderr 'key "dupe" already in bibliography'
+
+# missing input file
+! bib -bib valid.bib doesnotexist.go
+! stdout .
+stderr 'no such file or directory'
+stderr 'doesnotexist\.go'
+
+-- invalid.bib --
+0000
+
+-- dupekey.bib --
+@misc{dupe,
+    tag = "value",
+}
+
+@misc{someotherkey,
+    tag = "value",
+}
+
+@misc{dupe,
+    tag = "value",
+}
+
+-- valid.bib --
+@misc{hello,
+    title  = "Hello, World!",
+    author = "Michael McLoughlin",
+    year   = 2020,
+}
