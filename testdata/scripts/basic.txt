@@ -1,0 +1,46 @@
+# output to stdout
+bib -bib basic.bib basic.go
+! stderr .
+cmp stdout expect.go
+
+# write back
+cp basic.go output.go
+bib -w -bib basic.bib output.go
+! stdout .
+! stderr .
+cmp output.go expect.go
+rm output.go
+
+# multiple files
+cp basic.go one.go
+cp basic.go two.go
+bib -w -bib basic.bib one.go two.go
+! stdout .
+! stderr .
+cmp one.go expect.go
+cmp two.go expect.go
+rm one.go two.go
+
+-- basic.bib --
+@misc{hello,
+    title  = "Hello, World!",
+    author = "Michael McLoughlin",
+    year   = 2020,
+}
+
+-- basic.go --
+package main
+
+// References:
+
+// Say [hello].
+func main() { fmt.Println("Hello, World!") }
+-- expect.go --
+package main
+
+// References:
+//
+//	[hello]  Michael McLoughlin. Hello, World!. 2020.
+
+// Say [hello].
+func main() { fmt.Println("Hello, World!") }
