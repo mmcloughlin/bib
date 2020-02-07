@@ -1,0 +1,4 @@
+github.com/nickng/bibtex v1.0.1 h1:Uop3DVOdQdrTamXfxr65f9KyHrd4RhttXwHi1BY6Wk0=
+github.com/nickng/bibtex v1.0.1/go.mod h1:0qHZj8RRrLaGXyPoF9odM3M1EX1HnWiwACyR3wgGf8U=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
