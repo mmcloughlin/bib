@@ -97,6 +97,73 @@ func TestFormat(t *testing.T) {
 			},
 			Expect: "First Author. Title. In Handbook of Golang, pages 42--78.",
 		},
+		{
+			TestEntry: TestEntry{
+				Name: "article",
+				Type: "article",
+				Fields: map[string]string{
+					"author":  "First Author",
+					"title":   "Title",
+					"journal": "Journal of Computer Science",
+					"year":    "1997",
+				},
+			},
+			Expect: "First Author. Title. Journal of Computer Science. 1997.",
+		},
+		{
+			TestEntry: TestEntry{
+				Name: "inbook",
+				Type: "inbook",
+				Fields: map[string]string{
+					"author":    "First Author",
+					"title":     "Title",
+					"booktitle": "Book Title",
+					"chapter":   "7",
+					"year":      "1988",
+				},
+			},
+			Expect: "First Author. Title. Book Title, chapter 7. 1988.",
+		},
+		{
+			TestEntry: TestEntry{
+				Name: "phdthesis",
+				Type: "phdthesis",
+				Fields: map[string]string{
+					"author": "First Author",
+					"title":  "Title",
+					"school": "University of Bristol",
+					"year":   "2001",
+				},
+			},
+			Expect: "First Author. Title. PhD thesis, University of Bristol. 2001.",
+		},
+		{
+			TestEntry: TestEntry{
+				Name: "mastersthesis",
+				Type: "mastersthesis",
+				Fields: map[string]string{
+					"author": "First Author",
+					"title":  "Title",
+					"school": "University of Bristol",
+					"year":   "2001",
+				},
+			},
+			Expect: "First Author. Title. Masters thesis, University of Bristol. 2001.",
+		},
+		{
+			TestEntry: TestEntry{
+				Name: "techreport",
+				Type: "techreport",
+				Fields: map[string]string{
+					"author":      "First Author",
+					"title":       "Title",
+					"institution": "Initech",
+					"number":      "TPS-142",
+					"year":        "1973",
+				},
+			},
+			Expect: "First Author. Title. Technical Report TPS-142, Initech. 1973.",
+		},
 	}
 	for _, c := range cases {
 		c := c // scopelint
