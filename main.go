@@ -26,6 +26,7 @@ func main1() int {
 	return int(subcommands.Execute(ctx))
 }
 
+// command is a base for subcommands, providing some basic conveniences.
 type command struct {
 	Log *log.Logger
 }
@@ -47,6 +48,7 @@ func (c command) Error(err error) subcommands.ExitStatus {
 	return c.Fail(err.Error())
 }
 
+// process subcommand.
 type process struct {
 	command
 
@@ -88,6 +90,7 @@ func (cmd *process) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 	return subcommands.ExitSuccess
 }
 
+// file processes a single file.
 func (cmd *process) file(filename string, b *Bibliography) error {
 	s, err := ParseFile(filename)
 	if err != nil {
