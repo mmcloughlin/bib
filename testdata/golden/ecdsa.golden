@@ -15,7 +15,7 @@ package ecdsa
 //	[NSA]   NSA CSS. Suite B Implementer’s Guide to FIPS 186-3 (ECDSA). 2010.
 //	        https://apps.nsa.gov/iaarchive/library/ia-guidance/ia-solutions-for-classified/algorithm-guidance/suite-b-implementers-guide-to-fips-186-3-ecdsa.cfm
 //	[SECG]  Certicom Research. SEC 1: Elliptic Curve Cryptography. Standards for Efficient
-//	        Cryptography 2. 2009. https://www.secg.org/sec1-v2.pdf
+//	        Cryptography 1. 2009. https://www.secg.org/sec1-v2.pdf
 
 import (
 	"crypto"
