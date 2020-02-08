@@ -65,13 +65,14 @@ bib -w -bib references.bib source.go
 
 This will edit the file to insert a bibliography, as follows:
 
-[embedmd]:# (testdata/golden/ecdsa.golden go /\/\/ References:/ /Cryptography.+$/)
+[embedmd]:# (testdata/golden/ecdsa.golden go /\/\/ References:/ /secg\.org.+$/)
 ```go
 // References:
 //
 //	[NSA]   NSA CSS. Suite B Implementer’s Guide to FIPS 186-3 (ECDSA). 2010.
 //	        https://apps.nsa.gov/iaarchive/library/ia-guidance/ia-solutions-for-classified/algorithm-guidance/suite-b-implementers-guide-to-fips-186-3-ecdsa.cfm
 //	[SECG]  Certicom Research. SEC 1: Elliptic Curve Cryptography. Standards for Efficient
+//	        Cryptography 1. 2009. https://www.secg.org/sec1-v2.pdf
 ```
 
 ## License
