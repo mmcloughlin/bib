@@ -253,6 +253,19 @@ func TestFormatRequiredFields(t *testing.T) {
 	}
 }
 
+func TestFormatUnknownType(t *testing.T) {
+	e := TestEntry{
+		Name:   "unknowntype",
+		Type:   "unknowntype",
+		Fields: map[string]string{"title": "Title"},
+	}
+	_, err := Format(e.Entry())
+	expect := `unknown entry type "unknowntype"`
+	if err == nil || err.Error() != expect {
+		t.Fatalf("got error %v; expected %s", err, expect)
+	}
+}
+
 func TestWrap(t *testing.T) {
 	cases := []struct {
 		Text   string

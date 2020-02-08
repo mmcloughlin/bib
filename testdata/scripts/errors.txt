@@ -26,6 +26,11 @@ chmod 0400 source.go
 ! stdout .
 stderr 'permission denied'
 
+# unknowntype
+! bib -bib unknowntype.bib source.go
+! stdout .
+stderr 'unknown entry type "unknowntype"'
+
 # missing reference
 ! bib -bib empty.bib source.go
 ! stdout .
@@ -47,6 +52,12 @@ stderr 'unknown reference "hello"'
 
 @misc{dupe,
     tag = "value",
+}
+
+-- unknowntype.bib --
+@unknowntype{hello,
+    title  = "Hello, World!",
+    author = "Michael McLoughlin",
 }
 
 -- valid.bib --
