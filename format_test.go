@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -248,6 +249,37 @@ func TestFormatRequiredFields(t *testing.T) {
 					t.Fail()
 				}
 			})
+		}
+	}
+}
+
+func TestWrap(t *testing.T) {
+	cases := []struct {
+		Text   string
+		Width  int
+		Expect []string
+	}{
+		{
+			Text:  "the fat cat sat on the mat",
+			Width: 10,
+			Expect: []string{
+				"the fat",
+				"cat sat on",
+				"the mat",
+			},
+		},
+		{
+			Text:  "thisismuchlongerthanwidth cat on mat",
+			Width: 10,
+			Expect: []string{
+				"thisismuchlongerthanwidth",
+				"cat on mat",
+			},
+		},
+	}
+	for _, c := range cases {
+		if got := Wrap(c.Text, c.Width); !reflect.DeepEqual(got, c.Expect) {
+			t.Errorf("Wrap(%q, %v) = %#v; expect %#v", c.Text, c.Width, got, c.Expect)
 		}
 	}
 }
