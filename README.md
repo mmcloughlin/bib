@@ -2,6 +2,10 @@
 
 BibTeX references for your Go source code.
 
+* Organize your references in standard BibTeX format
+* Cite references in source code with `[key]` syntax
+* `bib` will insert a bibliography comment with details of the citations in each file
+
 ## Install
 
 ```
