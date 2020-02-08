@@ -8,12 +8,25 @@ import (
 
 // Format entry as a string.
 func Format(e *Entry) (string, error) {
+	var err error
+
+	// Helper for accessing a required field.
+	required := func(key string) string {
+		if value, found := e.Fields[key]; found {
+			return value.String()
+		}
+		if err == nil {
+			err = xerrors.Errorf("missing required field %q", key)
+		}
+		return ""
+	}
+
 	// For simplicity assume author and title.
 	s := FormatAuthors(e.Authors())
 	if !strings.HasSuffix(s, ".") {
 		s += "."
 	}
-	s += " " + e.Fields["title"].String() + "."
+	s += " " + required("title") + "."
 
 	// Custom fields.
 	switch e.Type {
@@ -29,7 +42,7 @@ func Format(e *Entry) (string, error) {
 
 	case "inproceedings":
 		// Required fields: author, title, booktitle, year.
-		s += " In " + e.Fields["booktitle"].String()
+		s += " In " + required("booktitle")
 		if pages, found := e.Fields["pages"]; found {
 			s += ", pages " + pages.String()
 		}
@@ -37,28 +50,26 @@ func Format(e *Entry) (string, error) {
 
 	case "article":
 		// Required fields: author, title, journal, year.
-		if journal, found := e.Fields["journal"]; found {
-			s += " " + journal.String() + "."
-		}
+		s += " " + required("journal") + "."
 
 	case "inbook":
 		// Required fields: author or editor, title, chapter and/or pages, publisher, year.
-		s += " " + e.Fields["booktitle"].String()
-		s += ", chapter " + e.Fields["chapter"].String() + "."
+		s += " " + required("booktitle")
+		s += ", chapter " + required("chapter") + "."
 
 	case "phdthesis":
 		// Required fields: author, title, school, year.
-		s += " PhD thesis, " + e.Fields["school"].String() + "."
+		s += " PhD thesis, " + required("school") + "."
 
 	case "mastersthesis":
 		// Required fields: author, title, school, year.
-		s += " Masters thesis, " + e.Fields["school"].String() + "."
+		s += " Masters thesis, " + required("school") + "."
 
 	case "techreport":
 		// Required fields: author, title, institution, year.
 		// Optional fields: type, number, address, month, note.
-		s += " Technical Report " + e.Fields["number"].String()
-		s += ", " + e.Fields["institution"].String() + "."
+		s += " Technical Report " + required("number")
+		s += ", " + required("institution") + "."
 
 	default:
 		return "", xerrors.Errorf("unknown entry type %q", e.Type)
@@ -78,6 +89,9 @@ func Format(e *Entry) (string, error) {
 		s += " (accessed " + accessed.Format("January 2, 2006") + ")"
 	}
 
+	if err != nil {
+		return "", err
+	}
 	return s, nil
 }
 

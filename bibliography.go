@@ -17,7 +17,11 @@ type Entry struct {
 
 // Authors returns the list of authors.
 func (e Entry) Authors() []string {
-	authors := strings.Split(e.Fields["author"].String(), " and ")
+	field, found := e.Fields["author"]
+	if !found {
+		return nil
+	}
+	authors := strings.Split(field.String(), " and ")
 	for i := range authors {
 		authors[i] = strings.TrimSpace(authors[i])
 	}

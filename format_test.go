@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/nickng/bibtex"
@@ -180,5 +182,72 @@ func TestFormat(t *testing.T) {
 				t.Fail()
 			}
 		})
+	}
+}
+
+func TestFormatRequiredFields(t *testing.T) {
+	cases := []struct {
+		Type     string
+		Required []string
+	}{
+		{
+			Type:     "misc",
+			Required: []string{"title"},
+		},
+		{
+			Type:     "inproceedings",
+			Required: []string{"title", "booktitle"},
+		},
+		{
+			Type:     "article",
+			Required: []string{"title", "journal"},
+		},
+		{
+			Type:     "inbook",
+			Required: []string{"title", "booktitle", "chapter"},
+		},
+		{
+			Type:     "phdthesis",
+			Required: []string{"title", "school"},
+		},
+		{
+			Type:     "mastersthesis",
+			Required: []string{"title", "school"},
+		},
+		{
+			Type:     "techreport",
+			Required: []string{"title", "institution", "number"},
+		},
+	}
+	for _, c := range cases {
+		c := c // scopelint
+		for _, required := range c.Required {
+			required := required // scopelint
+			t.Run(c.Type+"_"+required, func(t *testing.T) {
+				// Build an entry with all required fields except this one.
+				e := TestEntry{
+					Name:   required,
+					Type:   c.Type,
+					Fields: map[string]string{},
+				}
+				for _, name := range c.Required {
+					if name != required {
+						e.Fields[name] = name
+					}
+				}
+
+				// Confirm it errors.
+				_, err := Format(e.Entry())
+				if err == nil {
+					t.Fatal("expected error; got nil")
+				}
+				substring := fmt.Sprintf("missing required field %q", required)
+				if !strings.Contains(err.Error(), substring) {
+					t.Logf("error              = %s", err)
+					t.Logf("expected substring = %q", substring)
+					t.Fail()
+				}
+			})
+		}
 	}
 }
