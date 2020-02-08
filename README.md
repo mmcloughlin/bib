@@ -8,7 +8,7 @@ BibTeX references for your Go source code.
 go get -u github.com/mmcloughlin/bib
 ```
 
-## Example
+## Usage
 
 Suppose you have some comments that need to refer to external sources, such
 as the following [real example from the `crypto/ecdsa` standard library
@@ -56,7 +56,7 @@ like the bibliography to be inserted.
 // References:
 ```
 
-Now run the `bib` tool on the file.
+Now run `bib` on the file.
 
 [embedmd]:# (testdata/scripts/basic.txt sh /bib -w/ /source\.go/)
 ```sh
