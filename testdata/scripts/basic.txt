@@ -1,27 +1,27 @@
 # output to stdout
-bib -bib basic.bib basic.go
+bib -bib references.bib basic.go
 ! stderr .
 cmp stdout expect.go
 
 # write back
-cp basic.go output.go
-bib -w -bib basic.bib output.go
+cp basic.go source.go
+bib -w -bib references.bib source.go
 ! stdout .
 ! stderr .
-cmp output.go expect.go
-rm output.go
+cmp source.go expect.go
+rm source.go
 
 # multiple files
 cp basic.go one.go
 cp basic.go two.go
-bib -w -bib basic.bib one.go two.go
+bib -w -bib references.bib one.go two.go
 ! stdout .
 ! stderr .
 cmp one.go expect.go
 cmp two.go expect.go
 rm one.go two.go
 
--- basic.bib --
+-- references.bib --
 @misc{hello,
     title  = "Hello, World!",
     author = "Michael McLoughlin",
