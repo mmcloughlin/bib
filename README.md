@@ -58,9 +58,9 @@ like the bibliography to be inserted.
 
 Now run `bib` on the file.
 
-[embedmd]:# (testdata/scripts/basic.txt sh /bib -w/ /source\.go/)
+[embedmd]:# (testdata/scripts/basic.txt sh /bib process -w/ /source\.go/)
 ```sh
-bib -w -bib references.bib source.go
+bib process -w -bib references.bib source.go
 ```
 
 This will edit the file to insert a bibliography, as follows:

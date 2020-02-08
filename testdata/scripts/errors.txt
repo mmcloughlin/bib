@@ -1,38 +1,43 @@
+# no -bib option
+! bib process
+! stdout .
+stderr 'must provide bibliography file'
+
 # missing bibliography file
-! bib -bib doesnotexist.bib
+! bib process -bib doesnotexist.bib
 ! stdout .
 stderr 'no such file or directory'
 stderr 'doesnotexist\.bib'
 
 # invalid bibliography
-! bib -bib invalid.bib
+! bib process -bib invalid.bib
 ! stdout .
 stderr 'syntax error'
 
 # duplicate keys
-! bib -bib dupekey.bib
+! bib process -bib dupekey.bib
 ! stdout .
 stderr 'key "dupe" already in bibliography'
 
 # missing input file
-! bib -bib valid.bib doesnotexist.go
+! bib process -bib valid.bib doesnotexist.go
 ! stdout .
 stderr 'no such file or directory'
 stderr 'doesnotexist\.go'
 
 # write failure
 chmod 0400 source.go
-! bib -w -bib valid.bib source.go
+! bib process -w -bib valid.bib source.go
 ! stdout .
 stderr 'permission denied'
 
 # unknowntype
-! bib -bib unknowntype.bib source.go
+! bib process -bib unknowntype.bib source.go
 ! stdout .
 stderr 'unknown entry type "unknowntype"'
 
 # missing reference
-! bib -bib empty.bib source.go
+! bib process -bib empty.bib source.go
 ! stdout .
 stderr 'unknown reference "hello"'
 

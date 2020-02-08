@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/google/subcommands"
 )
 
 func main() {
@@ -12,38 +15,80 @@ func main() {
 }
 
 func main1() int {
-	log.SetPrefix("bib: ")
-	log.SetFlags(0)
-	if err := mainerr(); err != nil {
-		log.Print(err)
-		return 1
+	base := command{
+		Log: log.New(os.Stderr, "bib: ", 0),
 	}
-	return 0
+	subcommands.Register(&process{command: base}, "")
+	subcommands.Register(subcommands.HelpCommand(), "")
+
+	flag.Parse()
+	ctx := context.Background()
+	return int(subcommands.Execute(ctx))
 }
 
-var (
-	bibfile = flag.String("bib", "", "bibliography file")
-	write   = flag.Bool("w", false, "write result to (source) file instead of stdout")
-)
+type command struct {
+	Log *log.Logger
+}
 
-func mainerr() error {
-	flag.Parse()
+// UsageError logs a usage error and returns a suitable exit code.
+func (c command) UsageError(format string, args ...interface{}) subcommands.ExitStatus {
+	c.Log.Printf(format, args...)
+	return subcommands.ExitUsageError
+}
 
-	b, err := ReadBibliography(*bibfile)
-	if err != nil {
-		return err
+// Fail logs an error message and returns a failing exit code.
+func (c command) Fail(format string, args ...interface{}) subcommands.ExitStatus {
+	c.Log.Printf(format, args...)
+	return subcommands.ExitFailure
+}
+
+// Error logs err and returns a failing exit code.
+func (c command) Error(err error) subcommands.ExitStatus {
+	return c.Fail(err.Error())
+}
+
+type process struct {
+	command
+
+	bibfile string
+	write   bool
+}
+
+func (*process) Name() string     { return "process" }
+func (*process) Synopsis() string { return "generate bibliography comments" }
+func (*process) Usage() string {
+	return `Usage: bib process [-w] -bib <bibfile> <source> ...
+
+Generate references comments for citations in given source files.
+
+`
+}
+
+func (cmd *process) SetFlags(f *flag.FlagSet) {
+	f.StringVar(&cmd.bibfile, "bib", "", "bibliography file")
+	f.BoolVar(&cmd.write, "w", false, "write result to (source) files instead of stdout")
+}
+
+func (cmd *process) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if cmd.bibfile == "" {
+		return cmd.UsageError("must provide bibliography file")
 	}
 
-	for _, filename := range flag.Args() {
-		if err := process(filename, b); err != nil {
-			return err
+	b, err := ReadBibliography(cmd.bibfile)
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	for _, filename := range f.Args() {
+		if err := cmd.file(filename, b); err != nil {
+			return cmd.Error(err)
 		}
 	}
 
-	return nil
+	return subcommands.ExitSuccess
 }
 
-func process(filename string, b *Bibliography) error {
+func (cmd *process) file(filename string, b *Bibliography) error {
 	s, err := ParseFile(filename)
 	if err != nil {
 		return err
@@ -58,7 +103,7 @@ func process(filename string, b *Bibliography) error {
 		return err
 	}
 
-	if *write {
+	if cmd.write {
 		err = ioutil.WriteFile(filename, out, 0644)
 	} else {
 		_, err = os.Stdout.Write(out)
