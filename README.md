@@ -5,6 +5,7 @@ BibTeX references for your Go source code.
 * Organize your references in standard BibTeX format
 * Cite references in source code with `[key]` syntax
 * `bib` will insert a bibliography comment with details of the citations in each file
+* Link checker for bibliography URLs
 
 ## Install
 
@@ -78,6 +79,10 @@ This will edit the file to insert a bibliography, as follows:
 //	[SECG]  Certicom Research. SEC 1: Elliptic Curve Cryptography. Standards for Efficient
 //	        Cryptography 1. 2009. https://www.secg.org/sec1-v2.pdf
 ```
+
+## Additional Features
+
+Link check URLs in your bibliography with `bib linkcheck` command.
 
 ## License
 
