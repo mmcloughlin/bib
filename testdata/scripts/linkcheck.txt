@@ -1,0 +1,28 @@
+[!network] skip 'test requires network calls'
+
+# links okay
+bib linkcheck -bib ok.bib
+! stderr .
+! stdout .
+
+# links okay (verbose)
+bib linkcheck -v -bib ok.bib
+stderr 'ok: https://httpbin.org/status/200'
+! stdout .
+
+# link not found
+! bib linkcheck -bib notfound.bib
+stderr 'error: https://httpbin.org/status/404: http status 404'
+! stdout .
+
+-- ok.bib --
+@misc{ok,
+    title  = "HTTP 200 OK",
+    url    = "https://httpbin.org/status/200",
+}
+
+-- notfound.bib --
+@misc{notfound,
+    title  = "HTTP 404 Not Found",
+    url    = "https://httpbin.org/status/404",
+}

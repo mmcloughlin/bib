@@ -19,6 +19,7 @@ func main1() int {
 		Log: log.New(os.Stderr, "bib: ", 0),
 	}
 	subcommands.Register(&process{command: base}, "")
+	subcommands.Register(&linkcheck{command: base}, "")
 	subcommands.Register(subcommands.HelpCommand(), "")
 
 	flag.Parse()
@@ -113,4 +114,51 @@ func (cmd *process) file(filename string, b *Bibliography) error {
 	}
 
 	return err
+}
+
+// linkcheck subcommand.
+type linkcheck struct {
+	command
+
+	bibfile string
+	verbose bool
+}
+
+func (*linkcheck) Name() string     { return "linkcheck" }
+func (*linkcheck) Synopsis() string { return "check whether all urls exist" }
+func (*linkcheck) Usage() string {
+	return `Usage: bib linkcheck [-v] -bib <bibfile>
+
+Check whether all URLs in the database exist.
+
+`
+}
+
+func (cmd *linkcheck) SetFlags(f *flag.FlagSet) {
+	f.StringVar(&cmd.bibfile, "bib", "", "bibliography file")
+	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
+}
+
+func (cmd *linkcheck) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if cmd.bibfile == "" {
+		return cmd.UsageError("must provide bibliography file")
+	}
+
+	b, err := ReadBibliography(cmd.bibfile)
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	// Check all URLs.
+	status := subcommands.ExitSuccess
+	for _, link := range Links(b) {
+		if err := CheckLink(link); err != nil {
+			cmd.Log.Printf("error: %s: %s", link, err)
+			status = subcommands.ExitFailure
+		} else if cmd.verbose {
+			cmd.Log.Printf("ok: %s", link)
+		}
+	}
+
+	return status
 }
