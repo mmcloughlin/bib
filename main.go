@@ -19,6 +19,7 @@ func main1() int {
 		Log: log.New(os.Stderr, "bib: ", 0),
 	}
 	subcommands.Register(&process{command: base}, "")
+	subcommands.Register(&format{command: base}, "")
 	subcommands.Register(&linkcheck{command: base}, "")
 	subcommands.Register(subcommands.HelpCommand(), "")
 
@@ -114,6 +115,55 @@ func (cmd *process) file(filename string, b *Bibliography) error {
 	}
 
 	return err
+}
+
+// format subcommand.
+type format struct {
+	command
+
+	bibfile string
+	write   bool
+}
+
+func (*format) Name() string     { return "fmt" }
+func (*format) Synopsis() string { return "format bibtex file" }
+func (*format) Usage() string {
+	return `Usage: bib fmt [-w] -bib <bibfile>
+
+Format BiBTeX file.
+
+`
+}
+
+func (cmd *format) SetFlags(f *flag.FlagSet) {
+	f.StringVar(&cmd.bibfile, "bib", "", "bibliography file")
+	f.BoolVar(&cmd.write, "w", false, "write result to (source) files instead of stdout")
+}
+
+func (cmd *format) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if cmd.bibfile == "" {
+		return cmd.UsageError("must provide bibliography file")
+	}
+
+	b, err := ReadBibliography(cmd.bibfile)
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	// Format and output.
+	formatted := FormatBibTeX(b)
+
+	if cmd.write {
+		err = ioutil.WriteFile(cmd.bibfile, formatted, 0644)
+	} else {
+		_, err = os.Stdout.Write(formatted)
+	}
+
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	return subcommands.ExitSuccess
 }
 
 // linkcheck subcommand.

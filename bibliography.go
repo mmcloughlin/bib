@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -94,4 +95,20 @@ func (b *Bibliography) Lookup(key string) *Entry {
 		}
 	}
 	return nil
+}
+
+// FormatBibTeX outputs b in a canonical format.
+func FormatBibTeX(b *Bibliography) []byte {
+	// Sort entries.
+	sorted := make([]*Entry, len(b.Entries))
+	copy(sorted, b.Entries)
+	sort.Sort(ByCiteName(sorted))
+
+	// Convert to bibtex package type and use pretty printing.
+	bib := bibtex.NewBibTex()
+	for _, entry := range sorted {
+		bib.AddEntry(&entry.BibEntry)
+	}
+
+	return []byte(bib.PrettyString())
 }

@@ -1,0 +1,44 @@
+# output to stdout
+bib fmt -bib references.bib
+! stderr .
+cmp stdout expect.bib
+
+# write back
+bib fmt -w -bib references.bib
+! stderr .
+! stdout .
+cmp references.bib expect.bib
+
+-- references.bib --
+@misc{b,
+    title  = "Hello, World!",
+    author               = "Michael McLoughlin",
+    year = 2020,
+}
+
+
+
+
+@misc{a,
+    year = 2020,
+
+
+    author = "Michael McLoughlin",
+
+
+
+    title  =                           "Hello, World!",
+}
+
+-- expect.bib --
+@misc{a,
+    title  = "Hello, World!",
+    author = "Michael McLoughlin",
+    year   = 2020,
+}
+
+@misc{b,
+    title  = "Hello, World!",
+    author = "Michael McLoughlin",
+    year   = 2020,
+}
