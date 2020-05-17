@@ -5,6 +5,7 @@ BibTeX references for your Go source code.
 * Organize your references in standard BibTeX format
 * Cite references in source code with `[key]` syntax
 * `bib` will insert a bibliography comment with details of the citations in each file
+* BibTeX formatter
 * Link checker for bibliography URLs
 
 ## Install
@@ -82,7 +83,8 @@ This will edit the file to insert a bibliography, as follows:
 
 ## Additional Features
 
-Link check URLs in your bibliography with `bib linkcheck` command.
+* Format BibTeX files with `bib fmt`
+* Link check URLs in your bibliography with `bib linkcheck` command.
 
 ## License
 
