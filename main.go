@@ -150,7 +150,7 @@ func (cmd *format) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 		return cmd.Error(err)
 	}
 
-	//
+	// Format and output.
 	formatted := FormatBibTeX(b)
 
 	if cmd.write {
