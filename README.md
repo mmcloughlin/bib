@@ -6,6 +6,7 @@ BibTeX references for your Go source code.
 * Cite references in source code with `[key]` syntax
 * `bib` will insert a bibliography comment with details of the citations in each file
 * BibTeX formatter
+* Generate templated output: for example markdown biblography for documentation
 * Link checker for bibliography URLs
 
 ## Install
@@ -84,6 +85,9 @@ This will edit the file to insert a bibliography, as follows:
 ## Additional Features
 
 * Format BibTeX files with `bib fmt`
+* Generate templated output with `bib generate`:
+  - Markdown bibliography with `bib generate -type markdown`
+  - Custom templates with `bib generate -tmpl <template>`
 * Link check URLs in your bibliography with `bib linkcheck` command.
 
 ## License
