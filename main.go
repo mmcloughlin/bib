@@ -1,11 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"flag"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/google/subcommands"
 )
@@ -19,6 +24,7 @@ func main1() int {
 		Log: log.New(os.Stderr, "bib: ", 0),
 	}
 	subcommands.Register(&process{command: base}, "")
+	subcommands.Register(&generate{command: base}, "")
 	subcommands.Register(&format{command: base}, "")
 	subcommands.Register(&linkcheck{command: base}, "")
 	subcommands.Register(subcommands.HelpCommand(), "")
@@ -115,6 +121,94 @@ func (cmd *process) file(filename string, b *Bibliography) error {
 	}
 
 	return err
+}
+
+// generate subcommand.
+type generate struct {
+	command
+
+	bibfile string
+	typ     string
+	tmpl    string
+	output  string
+}
+
+func (*generate) Name() string     { return "generate" }
+func (*generate) Synopsis() string { return "generate templated output" }
+func (*generate) Usage() string {
+	return `Usage: bib generate -bib <bibfile> [-tmpl <template>] [-output <file>]
+
+Generate templated output from BibTeX bibliography.
+
+`
+}
+
+func (cmd *generate) SetFlags(f *flag.FlagSet) {
+	f.StringVar(&cmd.bibfile, "bib", "", "bibliography file")
+	f.StringVar(&cmd.typ, "type", "", fmt.Sprintf(`name of a builtin template (possible values: "%s")`, strings.Join(BuiltinTemplateNames(), `", "`)))
+	f.StringVar(&cmd.tmpl, "tmpl", "", "template file (overrides type)")
+	f.StringVar(&cmd.output, "output", "", "output file (default stdout)")
+}
+
+func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if cmd.bibfile == "" {
+		return cmd.UsageError("must provide bibliography file")
+	}
+
+	b, err := ReadBibliography(cmd.bibfile)
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	// Load template.
+	tmpl, err := cmd.load()
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	// Generate output.
+	var buf bytes.Buffer
+	if err := Generate(&buf, tmpl, b); err != nil {
+		return cmd.Error(err)
+	}
+
+	// Write output.
+	if cmd.output != "" {
+		err = ioutil.WriteFile(cmd.output, buf.Bytes(), 0644)
+	} else {
+		_, err = io.Copy(os.Stdout, &buf)
+	}
+
+	if err != nil {
+		return cmd.Error(err)
+	}
+
+	return subcommands.ExitSuccess
+}
+
+// load template
+func (cmd *generate) load() (string, error) {
+	// Explicit filename has precedence.
+	if cmd.tmpl != "" {
+		b, err := ioutil.ReadFile(cmd.tmpl)
+		if err != nil {
+			return "", err
+		}
+		return string(b), nil
+	}
+
+	// Lookup type name in builtin templates.
+	if cmd.typ == "" {
+		return "", errors.New("empty type")
+	}
+
+	key := fmt.Sprintf("/%s.tmpl", cmd.typ)
+	s, ok := templates[key]
+	if !ok {
+		return "", fmt.Errorf("unknown type %q", cmd.typ)
+	}
+
+	return s, nil
 }
 
 // format subcommand.

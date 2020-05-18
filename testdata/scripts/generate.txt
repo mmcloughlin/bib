@@ -1,0 +1,44 @@
+# markdown output to stdout
+bib generate -bib references.bib -type markdown
+! stderr .
+cmp stdout expect.md
+
+# markdown output to file
+bib generate -bib references.bib -type markdown -output references.md
+! stderr .
+! stdout .
+cmp references.md expect.md
+
+# custom template
+bib generate -bib references.bib -tmpl custom.tmpl
+! stderr .
+cmp stdout custom.out
+
+-- references.bib --
+@misc{losttime,
+    title  = "In Search of Lost Time",
+    author = "Marcel Proust",
+    year   = 1913,
+}
+
+@misc{ulysses,
+    title  = "Ulysses",
+    author = "James Joyce",
+    year   = 1904,
+}
+
+-- expect.md --
+# Bibliography
+
+* Marcel Proust. In Search of Lost Time. 1913.
+* James Joyce. Ulysses. 1904.
+
+-- custom.tmpl --
+{{ range .Entries -}}
+{{ range .Authors -}}
+Hello, {{ . }}!
+{{ end -}}
+{{ end -}}
+-- custom.out --
+Hello, Marcel Proust!
+Hello, James Joyce!
