@@ -3,11 +3,14 @@ package main
 import (
 	"bytes"
 	"context"
+	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/google/subcommands"
 )
@@ -125,6 +128,7 @@ type generate struct {
 	command
 
 	bibfile string
+	typ     string
 	tmpl    string
 	output  string
 }
@@ -141,7 +145,8 @@ Generate templated output from BibTeX bibliography.
 
 func (cmd *generate) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&cmd.bibfile, "bib", "", "bibliography file")
-	f.StringVar(&cmd.tmpl, "tmpl", "", "template file")
+	f.StringVar(&cmd.typ, "type", "", fmt.Sprintf(`name of a builtin template (possible values: "%s")`, strings.Join(BuiltinTemplateNames(), `", "`)))
+	f.StringVar(&cmd.tmpl, "tmpl", "", "template file (overrides type)")
 	f.StringVar(&cmd.output, "output", "", "output file (default stdout)")
 }
 
@@ -183,11 +188,27 @@ func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{
 
 // load template
 func (cmd *generate) load() (string, error) {
-	b, err := ioutil.ReadFile(cmd.tmpl)
-	if err != nil {
-		return "", err
+	// Explicit filename has precedence.
+	if cmd.tmpl != "" {
+		b, err := ioutil.ReadFile(cmd.tmpl)
+		if err != nil {
+			return "", err
+		}
+		return string(b), nil
 	}
-	return string(b), nil
+
+	// Lookup type name in builtin templates.
+	if cmd.typ == "" {
+		return "", errors.New("empty type")
+	}
+
+	key := fmt.Sprintf("/%s.tmpl", cmd.typ)
+	s, ok := templates[key]
+	if !ok {
+		return "", fmt.Errorf("unknown type %q", cmd.typ)
+	}
+
+	return s, nil
 }
 
 // format subcommand.
