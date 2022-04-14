@@ -115,7 +115,7 @@ func (cmd *process) file(filename string, b *Bibliography) error {
 	}
 
 	if cmd.write {
-		err = ioutil.WriteFile(filename, out, 0644)
+		err = ioutil.WriteFile(filename, out, 0o644)
 	} else {
 		_, err = os.Stdout.Write(out)
 	}
@@ -174,7 +174,7 @@ func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{
 
 	// Write output.
 	if cmd.output != "" {
-		err = ioutil.WriteFile(cmd.output, buf.Bytes(), 0644)
+		err = ioutil.WriteFile(cmd.output, buf.Bytes(), 0o644)
 	} else {
 		_, err = io.Copy(os.Stdout, &buf)
 	}
@@ -186,7 +186,7 @@ func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{
 	return subcommands.ExitSuccess
 }
 
-// load template
+// load template.
 func (cmd *generate) load() (string, error) {
 	// Explicit filename has precedence.
 	if cmd.tmpl != "" {
@@ -248,7 +248,7 @@ func (cmd *format) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	formatted := FormatBibTeX(b)
 
 	if cmd.write {
-		err = ioutil.WriteFile(cmd.bibfile, formatted, 0644)
+		err = ioutil.WriteFile(cmd.bibfile, formatted, 0o644)
 	} else {
 		_, err = os.Stdout.Write(formatted)
 	}
@@ -283,7 +283,7 @@ func (cmd *linkcheck) SetFlags(f *flag.FlagSet) {
 	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
 }
 
-func (cmd *linkcheck) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (cmd *linkcheck) Execute(ctx context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	if cmd.bibfile == "" {
 		return cmd.UsageError("must provide bibliography file")
 	}
@@ -296,7 +296,7 @@ func (cmd *linkcheck) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 	// Check all URLs.
 	status := subcommands.ExitSuccess
 	for _, link := range Links(b) {
-		if err := CheckLink(link); err != nil {
+		if err := CheckLink(ctx, link); err != nil {
 			cmd.Log.Printf("error: %s: %s", link, err)
 			status = subcommands.ExitFailure
 		} else if cmd.verbose {

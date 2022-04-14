@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
@@ -19,8 +20,13 @@ func Links(b *Bibliography) []string {
 }
 
 // CheckLink checks whether the given URL exists.
-func CheckLink(u string) (err error) {
-	r, err := http.Get(u)
+func CheckLink(ctx context.Context, u string) (err error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return err
+	}
+
+	r, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
