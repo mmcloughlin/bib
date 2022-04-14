@@ -259,9 +259,8 @@ func TestFormatUnknownType(t *testing.T) {
 		Type:   "unknowntype",
 		Fields: map[string]string{"title": "Title"},
 	}
-	_, err := Format(e.Entry())
 	expect := `unknown entry type "unknowntype"`
-	if err == nil || err.Error() != expect {
+	if _, err := Format(e.Entry()); err == nil || err.Error() != expect {
 		t.Fatalf("got error %v; expected %s", err, expect)
 	}
 }

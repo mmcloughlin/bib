@@ -46,7 +46,7 @@ func TestGolden(t *testing.T) {
 			// Update golden file if requested.
 			golden := noext + ".golden"
 			if *update {
-				if err := ioutil.WriteFile(golden, got, 0666); err != nil {
+				if err := ioutil.WriteFile(golden, got, 0o666); err != nil {
 					t.Fatal(err)
 				}
 			}

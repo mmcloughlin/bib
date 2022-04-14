@@ -1,9 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"strings"
-
-	"golang.org/x/xerrors"
 )
 
 // Format entry as a string.
@@ -16,7 +15,7 @@ func Format(e *Entry) (string, error) {
 			return value.String()
 		}
 		if err == nil {
-			err = xerrors.Errorf("missing required field %q", key)
+			err = fmt.Errorf("missing required field %q", key)
 		}
 		return ""
 	}
@@ -72,7 +71,7 @@ func Format(e *Entry) (string, error) {
 		s += ", " + required("institution") + "."
 
 	default:
-		return "", xerrors.Errorf("unknown entry type %q", e.Type)
+		return "", fmt.Errorf("unknown entry type %q", e.Type)
 	}
 
 	// Look for a date.
