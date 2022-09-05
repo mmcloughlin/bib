@@ -1,3 +1,4 @@
+// Command bib manages BibTeX references in Go source code.
 package main
 
 import (
