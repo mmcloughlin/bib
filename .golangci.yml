@@ -2,6 +2,8 @@ linters:
   enable-all: true
   disable:
     - cyclop
+    - deadcode
+    - exhaustruct
     - exhaustivestruct
     - funlen
     - gochecknoglobals
@@ -10,14 +12,19 @@ linters:
     - golint
     - gomnd
     - gosec
+    - ifshort
     - interfacer
     - lll
     - maligned
     - nlreturn
+    - nonamedreturns
+    - nosnakecase
     - paralleltest
     - prealloc
     - scopelint
+    - structcheck
     - testpackage
+    - varcheck
     - varnamelen
     - wrapcheck
     - wsl
