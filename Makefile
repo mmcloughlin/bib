@@ -7,7 +7,7 @@ generate:
 	go generate -x
 	embedmd -w README.md
 
-GOLANGCI_LINT_VERSION=v1.51.2
+GOLANGCI_LINT_VERSION=v1.55.2
 
 .PHONY: bootstrap
 bootstrap:
