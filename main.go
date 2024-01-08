@@ -151,7 +151,7 @@ func (cmd *generate) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&cmd.output, "output", "", "output file (default stdout)")
 }
 
-func (cmd *generate) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (cmd *generate) Execute(_ context.Context, _ *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	if cmd.bibfile == "" {
 		return cmd.UsageError("must provide bibliography file")
 	}
@@ -235,7 +235,7 @@ func (cmd *format) SetFlags(f *flag.FlagSet) {
 	f.BoolVar(&cmd.write, "w", false, "write result to (source) files instead of stdout")
 }
 
-func (cmd *format) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (cmd *format) Execute(_ context.Context, _ *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	if cmd.bibfile == "" {
 		return cmd.UsageError("must provide bibliography file")
 	}
@@ -284,7 +284,7 @@ func (cmd *linkcheck) SetFlags(f *flag.FlagSet) {
 	f.BoolVar(&cmd.verbose, "v", false, "verbose output")
 }
 
-func (cmd *linkcheck) Execute(ctx context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (cmd *linkcheck) Execute(ctx context.Context, _ *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	if cmd.bibfile == "" {
 		return cmd.UsageError("must provide bibliography file")
 	}
